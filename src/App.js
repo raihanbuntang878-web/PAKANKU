@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { initializeApp } from 'firebase/app';
 import { 
-  getAuth, signInWithCustomToken, signInWithEmailAndPassword, 
+  getAuth, signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, signOut, onAuthStateChanged 
 } from 'firebase/auth';
 import { 
@@ -24,6 +24,7 @@ const firebaseConfig = {
   appId: "1:600847552162:web:7c2e8b5c4612554ca291fb",
   measurementId: "G-EZMM4VZWD8"
 };
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -65,9 +66,8 @@ export default function App() {
 
   // --- FIREBASE EFFECTS ---
   useEffect(() => {
-  const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+ const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
     setUser(currentUser);
-
     if (!currentUser) {
       setUserProfile(null);
       setActiveView('auth');
@@ -77,6 +77,10 @@ export default function App() {
 
   return () => unsubscribe();
 }, []);
+
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      if (!currentUser) {
         setUserProfile(null);
         setActiveView('auth');
         setIsLoading(false);
@@ -89,9 +93,8 @@ export default function App() {
     if (!user) return;
     
     // Fetch User Profile
-const userRef = doc(db, 'users', user.uid);
-    
-const unsubUser = onSnapshot(userRef, (docSnap) => {
+    const userRef = doc(db, 'users', user.uid);
+    const unsubUser = onSnapshot(userRef, (docSnap) => {
       if (docSnap.exists()) {
         setUserProfile(docSnap.data());
         if (activeView === 'auth') {
@@ -109,7 +112,7 @@ const unsubUser = onSnapshot(userRef, (docSnap) => {
     });
 
     // Fetch All Orders
-  collection(db, 'orders');
+    const ordRef = collection(db, 'orders');
     const unsubOrders = onSnapshot(ordRef, (snapshot) => {
       const ords = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       // Sort descending by date locally
