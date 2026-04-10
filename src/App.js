@@ -89,21 +89,6 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    if (!user) return;
-    
-    // Fetch User Profile
-    const userRef = doc(db, 'users', user.uid);
-    const unsubUser = onSnapshot(userRef, (docSnap) => {
-      if (docSnap.exists()) {
-        setUserProfile(docSnap.data());
-        if (activeView === 'auth') {
-          navigateTo('main', docSnap.data().role === 'seller' ? 'dashboard' : 'home');
-        }
-      }
-      setIsLoading(false);
-    });
-
     // Fetch All Products
     const prodRef = collection(db, 'products');
     const unsubProducts = onSnapshot(prodRef, (snapshot) => {
